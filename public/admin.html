@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — Colorado Pathway to Trades</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',sans-serif;background:#0a0a14;color:#fff;display:flex;min-height:100vh}
+
+    /* Sidebar */
+    .sidebar{width:220px;background:#13131f;border-right:1px solid rgba(255,255,255,.06);padding:24px 0;position:fixed;top:0;bottom:0;overflow-y:auto;z-index:10;display:flex;flex-direction:column}
+    .sidebar-logo{padding:0 20px 24px;font-size:16px;font-weight:800}
+    .sidebar-logo span{color:#4CAF50}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;color:rgba(255,255,255,.5);text-decoration:none;font-size:13px;font-weight:500;transition:all .15s}
+    .nav-item:hover,.nav-item.active{background:rgba(255,255,255,.05);color:#fff}
+    .nav-item.active{border-left:2px solid #4CAF50}
+    .nav-bottom{margin-top:auto;padding:16px 20px;font-size:11px;color:rgba(255,255,255,.2)}
+
+    /* Main */
+    .main{margin-left:220px;flex:1;padding:32px;max-width:1200px}
+    .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:12px}
+    .topbar h1{font-size:22px;font-weight:800;letter-spacing:-.5px}
+    .topbar-right{display:flex;gap:10px;align-items:center}
+
+    /* Stats */
+    .stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;margin-bottom:28px}
+    .stat{background:#13131f;border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:20px 18px}
+    .stat-val{font-size:30px;font-weight:900;line-height:1}
+    .stat-lbl{font-size:11px;color:rgba(255,255,255,.35);margin-top:6px;text-transform:uppercase;letter-spacing:.5px}
+
+    /* Cards */
+    .card{background:#13131f;border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:22px;margin-bottom:20px}
+    .card-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:rgba(255,255,255,.35);margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
+
+    /* Table */
+    .table-wrap{overflow-x:auto}
+    table{width:100%;border-collapse:collapse;font-size:13px}
+    thead th{padding:10px 14px;text-align:left;background:rgba(255,255,255,.03);font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:rgba(255,255,255,.3);font-weight:600;white-space:nowrap}
+    tbody td{padding:12px 14px;border-top:1px solid rgba(255,255,255,.04);vertical-align:middle}
+    tbody tr:hover td{background:rgba(255,255,255,.02);cursor:pointer}
+    .empty{text-align:center;padding:40px;color:rgba(255,255,255,.25);font-size:14px}
+
+    /* Badges */
+    .badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700}
+    .badge-green{background:rgba(76,175,80,.15);color:#4CAF50}
+    .badge-blue{background:rgba(33,150,243,.15);color:#2196F3}
+    .badge-orange{background:rgba(255,152,0,.15);color:#FF9800}
+    .badge-gray{background:rgba(255,255,255,.08);color:rgba(255,255,255,.5)}
+
+    /* Buttons */
+    .btn{padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:600;font-family:'Inter',sans-serif;transition:all .15s;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+    .btn-primary{background:#4CAF50;color:#fff}
+    .btn-primary:hover{background:#43a047}
+    .btn-ghost{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.7)}
+    .btn-ghost:hover{background:rgba(255,255,255,.12);color:#fff}
+    .btn-danger{background:rgba(255,68,68,.15);border:1px solid rgba(255,68,68,.3);color:#ff4444}
+
+    /* Search / filter */
+    .toolbar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+    .search{padding:9px 14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:8px;color:#fff;font-size:13px;font-family:'Inter',sans-serif;outline:none;width:240px}
+    .search:focus{border-color:rgba(76,175,80,.4)}
+    select.filter{padding:9px 14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:8px;color:#fff;font-size:13px;font-family:'Inter',sans-serif;outline:none;cursor:pointer}
+    select.filter option{background:#1a1a2e}
+
+    /* Modal */
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:100;backdrop-filter:blur(4px);align-items:center;justify-content:center}
+    .modal-overlay.open{display:flex}
+    .modal{background:#13131f;border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:32px;max-width:540px;width:90%;max-height:85vh;overflow-y:auto;position:relative}
+    .modal-close{position:absolute;top:16px;right:16px;background:none;border:none;color:rgba(255,255,255,.4);font-size:20px;cursor:pointer;line-height:1}
+    .modal h2{font-size:18px;font-weight:800;margin-bottom:20px}
+    .info-row{display:flex;gap:12px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:13px}
+    .info-row:last-child{border-bottom:none}
+    .info-lbl{color:rgba(255,255,255,.35);width:130px;flex-shrink:0}
+    .info-val{color:#fff;font-weight:500;word-break:break-all}
+
+    /* Chart bars */
+    .bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+    .bar-lbl{font-size:12px;color:rgba(255,255,255,.5);width:120px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .bar-track{flex:1;height:8px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden}
+    .bar-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,#4CAF50,#2196F3);transition:width .4s}
+    .bar-count{font-size:12px;color:rgba(255,255,255,.4);width:24px;text-align:right}
+
+    /* Login */
+    .login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0a0a14;width:100%}
+    .login-card{background:#13131f;border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:40px;width:100%;max-width:360px;text-align:center}
+    .login-card h1{font-size:22px;font-weight:800;margin-bottom:6px}
+    .login-card p{color:rgba(255,255,255,.4);font-size:14px;margin-bottom:28px}
+    .login-input{width:100%;padding:13px 16px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#fff;font-size:15px;font-family:'Inter',sans-serif;outline:none;margin-bottom:12px}
+    .login-input:focus{border-color:#4CAF50}
+    .login-btn{width:100%;padding:13px;background:#4CAF50;border:none;border-radius:10px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif}
+    .login-err{color:#ff4444;font-size:13px;margin-top:8px;display:none}
+  </style>
+</head>
+<body>
+
+  <!-- Login Screen -->
+  <div class="login-wrap" id="login-screen">
+    <div class="login-card">
+      <div style="font-size:36px;margin-bottom:12px">🎓</div>
+      <h1>Admin Login</h1>
+      <p>Colorado Pathway to Trades</p>
+      <input class="login-input" type="password" id="login-pw" placeholder="Password" onkeydown="if(event.key==='Enter')doLogin()">
+      <button class="login-btn" onclick="doLogin()">Sign In →</button>
+      <div class="login-err" id="login-err">Incorrect password</div>
+    </div>
+  </div>
+
+  <!-- Dashboard -->
+  <div id="dashboard" style="display:none;width:100%;display:none">
+    <div class="sidebar">
+      <div class="sidebar-logo">CO <span>Pathway</span> Admin</div>
+      <a href="#" class="nav-item active" onclick="showPage('applications')">📋 Applications</a>
+      <a href="#" class="nav-item" onclick="showPage('analytics')">📊 Analytics</a>
+      <a href="#" class="nav-item" onclick="showPage('grants')">💰 Grant Breakdown</a>
+      <div class="nav-bottom">Colorado Pathway to Trades</div>
+    </div>
+
+    <div class="main">
+
+      <!-- ── APPLICATIONS PAGE ── -->
+      <div id="page-applications">
+        <div class="topbar">
+          <h1>📋 Applications</h1>
+          <div class="topbar-right">
+            <button class="btn btn-ghost" onclick="exportCSV()">📥 Export CSV</button>
+            <button class="btn btn-primary" onclick="loadData()">🔄 Refresh</button>
+          </div>
+        </div>
+
+        <div class="stats" id="stats-row"></div>
+
+        <div class="card">
+          <div class="card-title">
+            All Applications
+            <span id="app-count" style="color:rgba(255,255,255,.2)">0 total</span>
+          </div>
+          <div class="toolbar">
+            <input class="search" type="text" placeholder="🔍 Search name, email, trade..." oninput="filterTable(this.value)" id="search-input">
+            <select class="filter" onchange="filterByGrant(this.value)" id="grant-filter">
+              <option value="">All Grants</option>
+              <option value="wioa">WIOA</option>
+              <option value="wioa_dw">Dislocated Worker</option>
+              <option value="pell">Pell Grant</option>
+              <option value="taa">TAA</option>
+              <option value="veteran">Veteran</option>
+            </select>
+            <select class="filter" onchange="filterByTrade(this.value)" id="trade-filter">
+              <option value="">All Trades</option>
+              <option>Electrician</option>
+              <option>HVAC</option>
+              <option>Welding</option>
+              <option>Plumbing</option>
+              <option>Automotive</option>
+              <option>CDL</option>
+              <option>Medical Assistant</option>
+              <option>IT Support</option>
+              <option>Carpentry</option>
+            </select>
+          </div>
+          <div class="table-wrap">
+            <table id="app-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Trade</th>
+                  <th>Grants</th>
+                  <th>Workforce Center</th>
+                  <th>School</th>
+                  <th>Submitted</th>
+                </tr>
+              </thead>
+              <tbody id="app-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── ANALYTICS PAGE ── -->
+      <div id="page-analytics" style="display:none">
+        <div class="topbar"><h1>📊 Analytics</h1></div>
+        <div class="stats" id="analytics-stats"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;flex-wrap:wrap">
+          <div class="card">
+            <div class="card-title">Applications by Trade</div>
+            <div id="chart-trades"></div>
+          </div>
+          <div class="card">
+            <div class="card-title">Applications by Region</div>
+            <div id="chart-regions"></div>
+          </div>
+          <div class="card">
+            <div class="card-title">Employment Status</div>
+            <div id="chart-employment"></div>
+          </div>
+          <div class="card">
+            <div class="card-title">Income Brackets</div>
+            <div id="chart-income"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── GRANTS PAGE ── -->
+      <div id="page-grants" style="display:none">
+        <div class="topbar"><h1>💰 Grant Breakdown</h1></div>
+        <div class="card">
+          <div class="card-title">Grant Distribution</div>
+          <div id="chart-grants"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Estimated Total Funding Unlocked</div>
+          <div id="funding-total" style="font-size:48px;font-weight:900;color:#4CAF50;padding:20px 0"></div>
+          <p style="color:rgba(255,255,255,.3);font-size:13px">Based on average grant amounts per applicant</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Application Detail Modal -->
+  <div class="modal-overlay" id="modal" onclick="if(event.target===this)closeModal()">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      <h2 id="modal-name"></h2>
+      <div id="modal-body"></div>
+    </div>
+  </div>
+
+<script>
+  let allApps = [];
+  let filtered = [];
+  const ADMIN_PW = 'pathway2026';
+
+  // ── AUTH ──────────────────────────────────────────────────────
+  function doLogin() {
+    const pw = document.getElementById('login-pw').value;
+    if (pw === ADMIN_PW) {
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'flex';
+      loadData();
+    } else {
+      document.getElementById('login-err').style.display = 'block';
+    }
+  }
+
+  // ── DATA ──────────────────────────────────────────────────────
+  async function loadData() {
+    const res = await fetch('/admin/api/applications');
+    allApps = await res.json();
+    filtered = [...allApps];
+    renderStats();
+    renderTable(filtered);
+    renderAnalytics();
+    renderGrants();
+  }
+
+  // ── STATS ─────────────────────────────────────────────────────
+  function renderStats() {
+    const total = allApps.length;
+    const today = allApps.filter(a => new Date(a.submitted_at).toDateString() === new Date().toDateString()).length;
+    const withWioa = allApps.filter(a => a.grants?.includes('wioa') || a.grants?.includes('wioa_dw')).length;
+    const estFunding = total * 11000;
+
+    document.getElementById('stats-row').innerHTML = `
+      <div class="stat"><div class="stat-val">${total}</div><div class="stat-lbl">Total Applications</div></div>
+      <div class="stat"><div class="stat-val" style="color:#4CAF50">${today}</div><div class="stat-lbl">Today</div></div>
+      <div class="stat"><div class="stat-val" style="color:#2196F3">${withWioa}</div><div class="stat-lbl">WIOA Eligible</div></div>
+      <div class="stat"><div class="stat-val" style="color:#FF9800">$${(estFunding/1000).toFixed(0)}K</div><div class="stat-lbl">Est. Funding</div></div>
+    `;
+    document.getElementById('app-count').textContent = total + ' total';
+  }
+
+  // ── TABLE ─────────────────────────────────────────────────────
+  const grantColors = { wioa:'badge-green', wioa_dw:'badge-blue', pell:'badge-blue', taa:'badge-orange', veteran:'badge-orange', co_state:'badge-gray' };
+  const grantNames = { wioa:'WIOA', wioa_dw:'DW', pell:'Pell', taa:'TAA', veteran:'Vet', co_state:'CO' };
+
+  function renderTable(apps) {
+    const tbody = document.getElementById('app-tbody');
+    if (!apps.length) {
+      tbody.innerHTML = '<tr><td colspan="8" class="empty">No applications yet</td></tr>';
+      return;
+    }
+    tbody.innerHTML = apps.map(a => `
+      <tr onclick="openModal('${a.id}')">
+        <td style="font-weight:600">${a.name || '—'}</td>
+        <td style="color:rgba(255,255,255,.5)">${a.email || '—'}</td>
+        <td style="color:rgba(255,255,255,.5)">${a.phone || '—'}</td>
+        <td>${a.answers?.trade || '—'}</td>
+        <td>${(a.grants||[]).map(g => `<span class="badge ${grantColors[g]||'badge-gray'}">${grantNames[g]||g}</span>`).join(' ')}</td>
+        <td style="color:rgba(255,255,255,.4);font-size:12px">${(a.center||'').replace('Workforce Center — ','')}</td>
+        <td style="color:rgba(255,255,255,.4);font-size:12px">${a.school_id && a.school_id !== 'none' ? a.school_id.replace(/-/g,' ') : '—'}</td>
+        <td style="color:rgba(255,255,255,.35);font-size:12px">${new Date(a.submitted_at).toLocaleDateString()}</td>
+      </tr>
+    `).join('');
+  }
+
+  function filterTable(q) {
+    const grantF = document.getElementById('grant-filter').value;
+    const tradeF = document.getElementById('trade-filter').value;
+    applyFilters(q, grantF, tradeF);
+  }
+  function filterByGrant(g) { applyFilters(document.getElementById('search-input').value, g, document.getElementById('trade-filter').value); }
+  function filterByTrade(t) { applyFilters(document.getElementById('search-input').value, document.getElementById('grant-filter').value, t); }
+
+  function applyFilters(q, grant, trade) {
+    filtered = allApps.filter(a => {
+      const matchQ = !q || [a.name, a.email, a.answers?.trade].join(' ').toLowerCase().includes(q.toLowerCase());
+      const matchGrant = !grant || (a.grants||[]).includes(grant);
+      const matchTrade = !trade || (a.answers?.trade||'').toLowerCase().includes(trade.toLowerCase());
+      return matchQ && matchGrant && matchTrade;
+    });
+    renderTable(filtered);
+    document.getElementById('app-count').textContent = filtered.length + ' shown';
+  }
+
+  // ── MODAL ─────────────────────────────────────────────────────
+  function openModal(id) {
+    const a = allApps.find(x => String(x.id) === String(id));
+    if (!a) return;
+    document.getElementById('modal-name').textContent = a.name || 'Applicant';
+    document.getElementById('modal-body').innerHTML = `
+      <div class="info-row"><span class="info-lbl">Email</span><span class="info-val">${a.email||'—'}</span></div>
+      <div class="info-row"><span class="info-lbl">Phone</span><span class="info-val">${a.phone||'—'}</span></div>
+      <div class="info-row"><span class="info-lbl">Zip Code</span><span class="info-val">${a.answers?.zip||'—'}</span></div>
+      <div class="info-row"><span class="info-lbl">Trade Interest</span><span class="info-val">${a.answers?.trade||'—'}</span></div>
+      <div class="info-row"><span class="info-lbl">Employment</span><span class="info-val">${a.answers?.employed||'—'}</span></div>
+      <div class="info-row"><span class="info-lbl">Income Range</span><span class="info-val">${incomeLabel(a.answers?.income)}</span></div>
+      <div class="info-row"><span class="info-lbl">Job Loss</span><span class="info-val">${a.answers?.job_loss==='yes'?'Yes':'No'}</span></div>
+      <div class="info-row"><span class="info-lbl">Veteran</span><span class="info-val">${a.answers?.veteran==='yes'?'Yes':'No'}</span></div>
+      <div class="info-row"><span class="info-lbl">Grants Matched</span><span class="info-val">${(a.grants||[]).map(g=>`<span class="badge ${grantColors[g]||'badge-gray'}">${grantNames[g]||g}</span>`).join(' ')}</span></div>
+      <div class="info-row"><span class="info-lbl">Workforce Center</span><span class="info-val">${a.center||'—'}</span></div>
+      <div class="info-row"><span class="info-lbl">School Selected</span><span class="info-val">${a.school_id && a.school_id!=='none' ? a.school_id.replace(/-/g,' ') : 'Not selected'}</span></div>
+      <div class="info-row"><span class="info-lbl">Submitted</span><span class="info-val">${new Date(a.submitted_at).toLocaleString()}</span></div>
+    `;
+    document.getElementById('modal').classList.add('open');
+  }
+  function closeModal() { document.getElementById('modal').classList.remove('open'); }
+
+  function incomeLabel(val) {
+    const map = { '15000':'Under $20K', '30000':'$20K–$40K', '50000':'$40K–$60K', '75000':'$60K–$80K', '100000':'Over $80K' };
+    return map[val] || val || '—';
+  }
+
+  // ── ANALYTICS ─────────────────────────────────────────────────
+  function renderAnalytics() {
+    const trades = countBy(allApps, a => a.answers?.trade || 'Unknown');
+    const regions = countBy(allApps, a => a.center?.replace('Workforce Center — ','') || 'Unknown');
+    const employment = countBy(allApps, a => ({ no:'Unemployed', parttime:'Part-time', yes:'Employed' }[a.answers?.employed] || 'Unknown'));
+    const income = countBy(allApps, a => incomeLabel(a.answers?.income));
+
+    renderBarChart('chart-trades', trades);
+    renderBarChart('chart-regions', regions);
+    renderBarChart('chart-employment', employment);
+    renderBarChart('chart-income', income);
+
+    const w = allApps.filter(a=>a.grants?.includes('wioa')||a.grants?.includes('wioa_dw')).length;
+    const p = allApps.filter(a=>a.grants?.includes('pell')).length;
+    document.getElementById('analytics-stats').innerHTML = `
+      <div class="stat"><div class="stat-val">${allApps.length}</div><div class="stat-lbl">Total</div></div>
+      <div class="stat"><div class="stat-val" style="color:#4CAF50">${w}</div><div class="stat-lbl">WIOA Qualified</div></div>
+      <div class="stat"><div class="stat-val" style="color:#2196F3">${p}</div><div class="stat-lbl">Pell Qualified</div></div>
+      <div class="stat"><div class="stat-val" style="color:#FF9800">${allApps.filter(a=>a.answers?.veteran==='yes').length}</div><div class="stat-lbl">Veterans</div></div>
+    `;
+  }
+
+  function renderGrants() {
+    const grants = {};
+    allApps.forEach(a => (a.grants||[]).forEach(g => { grants[g] = (grants[g]||0)+1; }));
+    renderBarChart('chart-grants', grants, grantNames);
+    const est = allApps.length * 11000;
+    document.getElementById('funding-total').textContent = '$' + est.toLocaleString();
+  }
+
+  function countBy(arr, fn) {
+    const out = {};
+    arr.forEach(a => { const k = fn(a); if(k) out[k] = (out[k]||0)+1; });
+    return out;
+  }
+
+  function renderBarChart(containerId, data, labelMap={}) {
+    const el = document.getElementById(containerId);
+    if (!el) return;
+    const sorted = Object.entries(data).sort((a,b)=>b[1]-a[1]);
+    const max = sorted[0]?.[1] || 1;
+    if (!sorted.length) { el.innerHTML = '<p style="color:rgba(255,255,255,.2);font-size:13px;padding:12px 0">No data yet</p>'; return; }
+    el.innerHTML = sorted.map(([k,v]) => `
+      <div class="bar-row">
+        <div class="bar-lbl">${labelMap[k]||k}</div>
+        <div class="bar-track"><div class="bar-fill" style="width:${Math.round(v/max*100)}%"></div></div>
+        <div class="bar-count">${v}</div>
+      </div>
+    `).join('');
+  }
+
+  // ── EXPORT ────────────────────────────────────────────────────
+  function exportCSV() {
+    const rows = [['Name','Email','Phone','Trade','Grants','Center','School','Submitted']];
+    filtered.forEach(a => rows.push([
+      a.name, a.email, a.phone,
+      a.answers?.trade||'',
+      (a.grants||[]).join('+'),
+      a.center||'',
+      a.school_id||'',
+      new Date(a.submitted_at).toLocaleString()
+    ]));
+    const csv = rows.map(r => r.map(c => '"'+(c||'').replace(/"/g,'""')+'"').join(',')).join('\n');
+    const blob = new Blob([csv], {type:'text/csv'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'applications.csv'; a.click();
+  }
+
+  // ── PAGE NAV ──────────────────────────────────────────────────
+  function showPage(p) {
+    ['applications','analytics','grants'].forEach(id => {
+      document.getElementById('page-'+id).style.display = id===p ? 'block' : 'none';
+    });
+    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+    event.target.classList.add('active');
+  }
+</script>
+</body>
+</html>

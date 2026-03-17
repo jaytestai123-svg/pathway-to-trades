@@ -272,6 +272,32 @@ app.post('/api/apply', async (req, res) => {
   res.json({ success: true, center, school, grants });
 });
 
+// ─── ADMIN ─────────────────────────────────────────────────────────
+app.get('/admin', (req, res) => res.sendFile(path.join(__dirname, '../public/admin.html')));
+
+app.get('/admin/api/applications', (req, res) => {
+  const logPath = path.join(__dirname, '../data/applications.json');
+  try {
+    const apps = JSON.parse(fs.readFileSync(logPath));
+    res.json(apps.reverse()); // newest first
+  } catch(e) {
+    res.json([]);
+  }
+});
+
+app.get('/admin/api/stats', (req, res) => {
+  const logPath = path.join(__dirname, '../data/applications.json');
+  try {
+    const apps = JSON.parse(fs.readFileSync(logPath));
+    const today = apps.filter(a => new Date(a.submitted_at).toDateString() === new Date().toDateString()).length;
+    const grants = {};
+    apps.forEach(a => (a.grants||[]).forEach(g => { grants[g] = (grants[g]||0)+1; }));
+    res.json({ total: apps.length, today, grants, estFunding: apps.length * 11000 });
+  } catch(e) {
+    res.json({ total: 0, today: 0, grants: {}, estFunding: 0 });
+  }
+});
+
 // Health check
 app.get('/health', (req, res) => res.json({ status: 'ok' }));
 
