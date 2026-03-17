@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Check Your Eligibility — Colorado Pathway to Trades</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',sans-serif;background:#0a0a14;color:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:40px 20px}
+
+    .logo{font-size:18px;font-weight:800;margin-bottom:40px;color:#fff}
+    .logo span{color:#4CAF50}
+
+    .card{background:#13131f;border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:40px;width:100%;max-width:560px}
+
+    /* Progress bar */
+    .progress{margin-bottom:32px}
+    .progress-bar{height:4px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden;margin-bottom:8px}
+    .progress-fill{height:100%;background:linear-gradient(90deg,#4CAF50,#2196F3);border-radius:2px;transition:width .4s ease}
+    .progress-label{font-size:12px;color:rgba(255,255,255,.3)}
+
+    /* Step content */
+    .step{display:none}
+    .step.active{display:block}
+    .step-icon{font-size:36px;margin-bottom:16px}
+    .step h2{font-size:22px;font-weight:800;margin-bottom:8px;letter-spacing:-.5px}
+    .step p.hint{font-size:14px;color:rgba(255,255,255,.4);margin-bottom:28px;line-height:1.6}
+
+    /* Option buttons */
+    .options{display:flex;flex-direction:column;gap:10px}
+    .option{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:14px 18px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:12px;font-size:14px;font-weight:500;text-align:left}
+    .option:hover{background:rgba(76,175,80,.1);border-color:rgba(76,175,80,.3)}
+    .option.selected{background:rgba(76,175,80,.15);border-color:#4CAF50;color:#4CAF50}
+    .option-icon{font-size:20px;width:28px;flex-shrink:0}
+
+    /* Grid options (for trades) */
+    .options-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+    /* Inputs */
+    .form-group{margin-bottom:18px}
+    .form-group label{display:block;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:rgba(255,255,255,.4);margin-bottom:8px}
+    .form-group input{width:100%;padding:13px 16px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#fff;font-size:15px;font-family:'Inter',sans-serif;outline:none;transition:border-color .15s}
+    .form-group input:focus{border-color:#4CAF50}
+    .form-group input::placeholder{color:rgba(255,255,255,.25)}
+
+    /* Nav buttons */
+    .btn-row{display:flex;gap:10px;margin-top:28px}
+    .btn-next{flex:1;background:#4CAF50;color:#fff;border:none;border-radius:10px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:background .15s}
+    .btn-next:hover{background:#43a047}
+    .btn-back{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.6);border-radius:10px;padding:14px 20px;font-size:14px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif}
+    .btn-next:disabled{opacity:.4;cursor:not-allowed}
+
+    /* Results */
+    .grant-result{background:rgba(76,175,80,.08);border:1px solid rgba(76,175,80,.2);border-radius:14px;padding:20px;margin-bottom:12px}
+    .grant-result h3{font-size:15px;font-weight:700;margin-bottom:4px;color:#4CAF50}
+    .grant-result .amount{font-size:22px;font-weight:800;margin-bottom:6px}
+    .grant-result p{font-size:13px;color:rgba(255,255,255,.5);line-height:1.6}
+    .grant-tag{display:inline-block;background:rgba(76,175,80,.15);color:#4CAF50;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;margin-bottom:8px}
+
+    .school-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:18px;margin-bottom:10px;cursor:pointer;transition:all .15s}
+    .school-card:hover,.school-card.selected{border-color:#4CAF50;background:rgba(76,175,80,.08)}
+    .school-card h3{font-size:14px;font-weight:700;margin-bottom:4px}
+    .school-card p{font-size:12px;color:rgba(255,255,255,.4);line-height:1.6}
+    .school-badge{display:inline-block;background:rgba(76,175,80,.15);color:#4CAF50;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;margin-right:4px;margin-top:4px}
+
+    .success-icon{font-size:56px;margin-bottom:16px}
+    .success-list{margin:20px 0;text-align:left}
+    .success-item{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:14px;align-items:flex-start}
+    .success-item:last-child{border-bottom:none}
+    .success-item .check{color:#4CAF50;font-weight:700;flex-shrink:0}
+
+    .total-box{background:rgba(76,175,80,.1);border:1px solid rgba(76,175,80,.2);border-radius:12px;padding:16px;text-align:center;margin:20px 0}
+    .total-box .total-amount{font-size:32px;font-weight:900;color:#4CAF50}
+    .total-box p{font-size:12px;color:rgba(255,255,255,.4);margin-top:4px}
+  </style>
+</head>
+<body>
+
+  <a href="/" class="logo">Colorado <span>Pathway</span> to Trades</a>
+
+  <div class="card">
+    <div class="progress">
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:12%"></div></div>
+      <div class="progress-label" id="progress-label">Step 1 of 8</div>
+    </div>
+
+    <!-- Step 1: Age / Employment Status -->
+    <div class="step active" id="step-1">
+      <div class="step-icon">👋</div>
+      <h2>How old are you?</h2>
+      <p class="hint">Eligibility for some programs depends on age. We won't share this info.</p>
+      <div class="options">
+        <div class="option" onclick="select(this,'age','16-17')"><span class="option-icon">🧑</span>16–17 years old</div>
+        <div class="option" onclick="select(this,'age','18-24')"><span class="option-icon">🧑</span>18–24 years old</div>
+        <div class="option" onclick="select(this,'age','25-34')"><span class="option-icon">👨</span>25–34 years old</div>
+        <div class="option" onclick="select(this,'age','35-49')"><span class="option-icon">👨</span>35–49 years old</div>
+        <div class="option" onclick="select(this,'age','50+')"><span class="option-icon">👴</span>50 or older</div>
+      </div>
+      <div class="btn-row"><button class="btn-next" id="next-1" onclick="next(2)" disabled>Continue →</button></div>
+    </div>
+
+    <!-- Step 2: Employment Status -->
+    <div class="step" id="step-2">
+      <div class="step-icon">💼</div>
+      <h2>What's your current employment status?</h2>
+      <p class="hint">This determines which WIOA track you qualify for.</p>
+      <div class="options">
+        <div class="option" onclick="select(this,'employed','no')"><span class="option-icon">🔍</span>Not currently employed</div>
+        <div class="option" onclick="select(this,'employed','parttime')"><span class="option-icon">⏰</span>Part-time / underemployed</div>
+        <div class="option" onclick="select(this,'employed','yes')"><span class="option-icon">✅</span>Employed full-time</div>
+      </div>
+      <div class="btn-row">
+        <button class="btn-back" onclick="back(1)">← Back</button>
+        <button class="btn-next" id="next-2" onclick="next(3)" disabled>Continue →</button>
+      </div>
+    </div>
+
+    <!-- Step 3: Job Loss -->
+    <div class="step" id="step-3">
+      <div class="step-icon">🏭</div>
+      <h2>Did you recently lose a job due to layoff, company closure, or downsizing?</h2>
+      <p class="hint">Dislocated workers qualify for higher grant amounts.</p>
+      <div class="options">
+        <div class="option" onclick="select(this,'job_loss','yes'); showQ3b()"><span class="option-icon">✅</span>Yes — I was laid off or my company closed</div>
+        <div class="option" onclick="select(this,'job_loss','no'); hideQ3b()"><span class="option-icon">❌</span>No</div>
+      </div>
+      <div id="q3b" style="display:none;margin-top:16px">
+        <p style="font-size:13px;color:rgba(255,255,255,.4);margin-bottom:10px">Was it related to foreign trade or outsourcing?</p>
+        <div class="options">
+          <div class="option" onclick="select(this,'job_loss_reason','trade')"><span class="option-icon">🌍</span>Yes — outsourced or foreign competition</div>
+          <div class="option" onclick="select(this,'job_loss_reason','other')"><span class="option-icon">🏢</span>No — regular layoff or closure</div>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn-back" onclick="back(2)">← Back</button>
+        <button class="btn-next" id="next-3" onclick="next(4)" disabled>Continue →</button>
+      </div>
+    </div>
+
+    <!-- Step 4: Income -->
+    <div class="step" id="step-4">
+      <div class="step-icon">💵</div>
+      <h2>What's your approximate annual household income?</h2>
+      <p class="hint">Used to determine Pell Grant eligibility. We keep this private.</p>
+      <div class="options">
+        <div class="option" onclick="select(this,'income','15000')"><span class="option-icon">💰</span>Under $20,000</div>
+        <div class="option" onclick="select(this,'income','30000')"><span class="option-icon">💰</span>$20,000 – $40,000</div>
+        <div class="option" onclick="select(this,'income','50000')"><span class="option-icon">💰</span>$40,000 – $60,000</div>
+        <div class="option" onclick="select(this,'income','75000')"><span class="option-icon">💰</span>$60,000 – $80,000</div>
+        <div class="option" onclick="select(this,'income','100000')"><span class="option-icon">💰</span>Over $80,000</div>
+      </div>
+      <div class="btn-row">
+        <button class="btn-back" onclick="back(3)">← Back</button>
+        <button class="btn-next" id="next-4" onclick="next(5)" disabled>Continue →</button>
+      </div>
+    </div>
+
+    <!-- Step 5: Veteran -->
+    <div class="step" id="step-5">
+      <div class="step-icon">🎖️</div>
+      <h2>Are you a U.S. military veteran?</h2>
+      <p class="hint">Veterans qualify for additional VA-funded programs on top of WIOA.</p>
+      <div class="options">
+        <div class="option" onclick="select(this,'veteran','yes')"><span class="option-icon">🎖️</span>Yes, I served in the U.S. military</div>
+        <div class="option" onclick="select(this,'veteran','no')"><span class="option-icon">👤</span>No</div>
+      </div>
+      <div class="btn-row">
+        <button class="btn-back" onclick="back(4)">← Back</button>
+        <button class="btn-next" id="next-5" onclick="next(6)" disabled>Continue →</button>
+      </div>
+    </div>
+
+    <!-- Step 6: Trade Interest -->
+    <div class="step" id="step-6">
+      <div class="step-icon">🛠️</div>
+      <h2>What trade are you interested in?</h2>
+      <p class="hint">We'll match you with nearby schools that offer this program.</p>
+      <div class="options options-grid">
+        <div class="option" onclick="select(this,'trade','Electrician')"><span class="option-icon">⚡</span>Electrician</div>
+        <div class="option" onclick="select(this,'trade','HVAC')"><span class="option-icon">❄️</span>HVAC</div>
+        <div class="option" onclick="select(this,'trade','Welding')"><span class="option-icon">🔥</span>Welding</div>
+        <div class="option" onclick="select(this,'trade','Plumbing')"><span class="option-icon">🔧</span>Plumbing</div>
+        <div class="option" onclick="select(this,'trade','Automotive')"><span class="option-icon">🚗</span>Automotive</div>
+        <div class="option" onclick="select(this,'trade','CDL')"><span class="option-icon">🚛</span>CDL / Trucking</div>
+        <div class="option" onclick="select(this,'trade','Medical Assistant')"><span class="option-icon">🏥</span>Medical</div>
+        <div class="option" onclick="select(this,'trade','IT Support')"><span class="option-icon">💻</span>IT Support</div>
+        <div class="option" onclick="select(this,'trade','Carpentry')"><span class="option-icon">🪚</span>Carpentry</div>
+        <div class="option" onclick="select(this,'trade','unsure')"><span class="option-icon">🤷</span>Not sure yet</div>
+      </div>
+      <div class="btn-row">
+        <button class="btn-back" onclick="back(5)">← Back</button>
+        <button class="btn-next" id="next-6" onclick="next(7)" disabled>Continue →</button>
+      </div>
+    </div>
+
+    <!-- Step 7: Zip Code -->
+    <div class="step" id="step-7">
+      <div class="step-icon">📍</div>
+      <h2>What's your Colorado zip code?</h2>
+      <p class="hint">We use this to find your nearest Workforce Center and schools.</p>
+      <div class="form-group">
+        <label>Zip Code</label>
+        <input type="text" id="zip-input" placeholder="e.g. 80202" maxlength="5" oninput="handleZip(this)" inputmode="numeric">
+      </div>
+      <div class="btn-row">
+        <button class="btn-back" onclick="back(6)">← Back</button>
+        <button class="btn-next" id="next-7" onclick="checkEligibility()" disabled>See My Results →</button>
+      </div>
+    </div>
+
+    <!-- Step 8: Results -->
+    <div class="step" id="step-8">
+      <div class="step-icon">🎉</div>
+      <h2>You qualify for funding!</h2>
+      <p class="hint">Here's what you're eligible for based on your answers.</p>
+      <div id="grants-list"></div>
+      <div class="total-box" id="total-box"></div>
+      <h3 style="font-size:14px;font-weight:700;margin:20px 0 12px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.5px">Schools Near You</h3>
+      <div id="schools-list"></div>
+      <div class="btn-row" style="margin-top:24px">
+        <button class="btn-next" onclick="goToContact()">Connect Me With a Case Worker →</button>
+      </div>
+    </div>
+
+    <!-- Step 9: Contact Info -->
+    <div class="step" id="step-9">
+      <div class="step-icon">📋</div>
+      <h2>Almost there — where should we send your info?</h2>
+      <p class="hint">Your local Workforce Center will reach out within 48 hours to start your grant application.</p>
+      <div class="form-group"><label>Full Name</label><input type="text" id="name-input" placeholder="Your full name" oninput="checkContact()"></div>
+      <div class="form-group"><label>Email Address</label><input type="email" id="email-input" placeholder="your@email.com" oninput="checkContact()"></div>
+      <div class="form-group"><label>Phone Number</label><input type="tel" id="phone-input" placeholder="(720) 555-0100" oninput="checkContact()"></div>
+      <p style="font-size:12px;color:rgba(255,255,255,.25);margin-top:-8px;margin-bottom:20px">We'll send your info to your local Colorado Workforce Center and the school you selected. No spam ever.</p>
+      <div class="btn-row">
+        <button class="btn-back" onclick="back(8)">← Back</button>
+        <button class="btn-next" id="next-9" onclick="submit()" disabled>Submit My Application →</button>
+      </div>
+    </div>
+
+    <!-- Step 10: Confirmation -->
+    <div class="step" id="step-10">
+      <div style="text-align:center">
+        <div class="success-icon">✅</div>
+        <h2 style="margin-bottom:8px">You're all set!</h2>
+        <p style="color:rgba(255,255,255,.5);font-size:14px;margin-bottom:24px">Your referral has been sent. Here's what happens next:</p>
+      </div>
+      <div class="success-list">
+        <div class="success-item"><span class="check">1</span><span>Your local <strong>Colorado Workforce Center</strong> will contact you within <strong>48 hours</strong> to begin your ITA (grant voucher) process.</span></div>
+        <div class="success-item"><span class="check">2</span><span>The <strong>trade school you selected</strong> will also reach out to walk you through enrollment.</span></div>
+        <div class="success-item"><span class="check">3</span><span>We've sent you a <strong>confirmation email</strong> with all your details and next steps.</span></div>
+      </div>
+      <div id="center-info" style="background:rgba(255,255,255,.04);border-radius:12px;padding:16px;margin-top:16px;font-size:13px;line-height:1.8;color:rgba(255,255,255,.6)"></div>
+      <a href="/" class="btn-next" style="display:block;text-align:center;margin-top:20px;text-decoration:none">← Back to Home</a>
+    </div>
+
+  </div>
+
+<script>
+  const answers = {};
+  let selectedSchoolId = null;
+  let resultsData = null;
+  let currentStep = 1;
+
+  // Pre-fill trade from URL
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('trade')) answers.trade = urlParams.get('trade');
+
+  const totalSteps = 9;
+  const stepProgress = { 1:12, 2:24, 3:36, 4:48, 5:60, 6:72, 7:84, 8:92, 9:100 };
+
+  function select(el, key, val) {
+    answers[key] = val;
+    const parent = el.closest('.options, .options-grid');
+    if (parent) parent.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    const nextBtn = document.getElementById('next-' + currentStep);
+    if (nextBtn) nextBtn.disabled = false;
+  }
+
+  function showQ3b() { document.getElementById('q3b').style.display = 'block'; }
+  function hideQ3b() { document.getElementById('q3b').style.display = 'none'; answers.job_loss_reason = null; }
+
+  function handleZip(el) {
+    el.value = el.value.replace(/\D/g,'');
+    document.getElementById('next-7').disabled = el.value.length !== 5;
+    if (el.value.length === 5) answers.zip = el.value;
+  }
+
+  function checkContact() {
+    const n = document.getElementById('name-input').value.trim();
+    const e = document.getElementById('email-input').value.trim();
+    const p = document.getElementById('phone-input').value.trim();
+    document.getElementById('next-9').disabled = !(n && e && p);
+  }
+
+  function next(stepNum) {
+    const cur = document.getElementById('step-' + currentStep);
+    const nxt = document.getElementById('step-' + stepNum);
+    if (!cur || !nxt) return;
+    cur.classList.remove('active');
+    nxt.classList.add('active');
+    currentStep = stepNum;
+    const pct = stepProgress[stepNum] || 100;
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('progress-label').textContent = 'Step ' + stepNum + ' of ' + totalSteps;
+    window.scrollTo(0,0);
+  }
+
+  function back(stepNum) { next(stepNum); }
+
+  async function checkEligibility() {
+    answers.zip = document.getElementById('zip-input').value;
+    document.getElementById('next-7').textContent = 'Checking...';
+    document.getElementById('next-7').disabled = true;
+
+    const res = await fetch('/api/eligibility', {
+      method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(answers)
+    });
+    resultsData = await res.json();
+
+    // Render grants
+    const gl = document.getElementById('grants-list');
+    gl.innerHTML = resultsData.grants.map(g => `
+      <div class="grant-result">
+        <div class="grant-tag">${g.tag.toUpperCase()}</div>
+        <h3>${g.name}</h3>
+        <div class="amount">${g.amount}</div>
+        <p>✅ Covers: ${g.covers}<br>⏱ ${g.timeline}<br>${g.how}</p>
+      </div>
+    `).join('');
+
+    // Total estimate
+    const tb = document.getElementById('total-box');
+    tb.innerHTML = '<div class="total-amount">Up to $' + (resultsData.grants.length >= 2 ? '22,395' : '15,000') + '</div><p>Estimated total available funding</p>';
+
+    // Render schools
+    const sl = document.getElementById('schools-list');
+    sl.innerHTML = resultsData.schools.slice(0,3).map(s => `
+      <div class="school-card" id="sc-${s.id}" onclick="selectSchool('${s.id}')">
+        <h3>${s.name} — ${s.city}</h3>
+        <p>📞 ${s.phone} &nbsp;|&nbsp; ⏱ ~${s.avg_duration_weeks} weeks<br>
+        ${s.programs.slice(0,4).map(p => `<span class="school-badge">${p}</span>`).join('')}</p>
+      </div>
+    `).join('') + '<div class="school-card" id="sc-none" onclick="selectSchool(\'none\')"><h3>I\'ll choose a school later</h3><p>Your Workforce Center can help you decide</p></div>';
+
+    next(8);
+  }
+
+  function selectSchool(id) {
+    selectedSchoolId = id;
+    document.querySelectorAll('.school-card').forEach(c => c.classList.remove('selected'));
+    document.getElementById('sc-' + id)?.classList.add('selected');
+  }
+
+  function goToContact() { next(9); }
+
+  async function submit() {
+    const btn = document.getElementById('next-9');
+    btn.textContent = 'Submitting...';
+    btn.disabled = true;
+
+    const res = await fetch('/api/apply', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        name: document.getElementById('name-input').value,
+        email: document.getElementById('email-input').value,
+        phone: document.getElementById('phone-input').value,
+        school_id: selectedSchoolId
+      })
+    });
+    const data = await res.json();
+
+    // Show center info on confirmation
+    if (data.center) {
+      document.getElementById('center-info').innerHTML =
+        `<strong style="color:#fff">Your Workforce Center:</strong><br>${data.center.name}<br>📍 ${data.center.address}<br>📞 ${data.center.phone}`;
+    }
+
+    document.getElementById('progress-fill').style.width = '100%';
+    document.getElementById('progress-label').textContent = 'Complete!';
+    next(10);
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Colorado Pathway to Trades — Get Your Grant. Start Your Career.</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',sans-serif;background:#0a0a14;color:#fff;overflow-x:hidden}
+    a{color:inherit;text-decoration:none}
+
+    /* Nav */
+    nav{display:flex;align-items:center;justify-content:space-between;padding:20px 40px;position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(10,10,20,.9);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.06)}
+    .logo{font-size:20px;font-weight:800;color:#fff}
+    .logo span{color:#4CAF50}
+    .nav-cta{background:#4CAF50;color:#fff;padding:10px 22px;border-radius:8px;font-weight:700;font-size:14px;transition:background .2s}
+    .nav-cta:hover{background:#43a047}
+
+    /* Hero */
+    .hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:120px 20px 80px;position:relative;overflow:hidden}
+    .hero::before{content:'';position:absolute;top:-200px;left:50%;transform:translateX(-50%);width:800px;height:800px;background:radial-gradient(circle,rgba(76,175,80,.12) 0%,transparent 70%);pointer-events:none}
+    .badge{display:inline-flex;align-items:center;gap:8px;background:rgba(76,175,80,.12);border:1px solid rgba(76,175,80,.3);color:#4CAF50;padding:8px 16px;border-radius:100px;font-size:13px;font-weight:600;margin-bottom:28px}
+    .hero h1{font-size:clamp(36px,6vw,72px);font-weight:900;line-height:1.05;letter-spacing:-2px;max-width:900px;margin-bottom:24px}
+    .hero h1 span{background:linear-gradient(135deg,#4CAF50,#2196F3);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .hero p{font-size:18px;color:rgba(255,255,255,.6);max-width:560px;line-height:1.7;margin-bottom:40px}
+    .hero-btns{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+    .btn-primary{background:#4CAF50;color:#fff;padding:16px 36px;border-radius:10px;font-weight:700;font-size:16px;transition:all .2s;display:inline-flex;align-items:center;gap:8px}
+    .btn-primary:hover{background:#43a047;transform:translateY(-2px);box-shadow:0 8px 32px rgba(76,175,80,.3)}
+    .btn-secondary{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:#fff;padding:16px 36px;border-radius:10px;font-weight:600;font-size:16px;transition:all .2s}
+    .btn-secondary:hover{background:rgba(255,255,255,.12)}
+
+    /* Stats bar */
+    .stats-bar{display:flex;justify-content:center;gap:60px;padding:40px 20px;border-top:1px solid rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.06);flex-wrap:wrap}
+    .stat{text-align:center}
+    .stat-num{font-size:32px;font-weight:900;color:#4CAF50}
+    .stat-lbl{font-size:13px;color:rgba(255,255,255,.4);margin-top:4px}
+
+    /* How it works */
+    .section{padding:80px 40px;max-width:1100px;margin:0 auto}
+    .section-label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#4CAF50;margin-bottom:12px}
+    .section h2{font-size:clamp(28px,4vw,44px);font-weight:800;letter-spacing:-1px;margin-bottom:16px}
+    .section p.sub{color:rgba(255,255,255,.5);font-size:16px;max-width:560px;line-height:1.7;margin-bottom:48px}
+
+    .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:24px}
+    .step{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:28px;position:relative}
+    .step-num{width:36px;height:36px;background:rgba(76,175,80,.15);border:1px solid rgba(76,175,80,.3);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#4CAF50;margin-bottom:16px}
+    .step h3{font-size:16px;font-weight:700;margin-bottom:8px}
+    .step p{font-size:14px;color:rgba(255,255,255,.5);line-height:1.6}
+
+    /* Grants section */
+    .grants-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
+    .grant-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:24px;transition:border-color .2s}
+    .grant-card:hover{border-color:rgba(76,175,80,.3)}
+    .grant-icon{font-size:28px;margin-bottom:12px}
+    .grant-card h3{font-size:16px;font-weight:700;margin-bottom:6px}
+    .grant-card .amount{font-size:22px;font-weight:800;color:#4CAF50;margin-bottom:8px}
+    .grant-card p{font-size:13px;color:rgba(255,255,255,.5);line-height:1.6}
+
+    /* Trades */
+    .trades-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+    .trade-chip{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:16px;text-align:center;cursor:pointer;transition:all .2s}
+    .trade-chip:hover{background:rgba(76,175,80,.1);border-color:rgba(76,175,80,.3)}
+    .trade-chip .icon{font-size:28px;margin-bottom:8px}
+    .trade-chip span{font-size:13px;font-weight:600}
+
+    /* CTA Banner */
+    .cta-banner{background:linear-gradient(135deg,rgba(76,175,80,.15),rgba(33,150,243,.15));border:1px solid rgba(76,175,80,.2);border-radius:24px;padding:60px 40px;text-align:center;margin:0 40px 80px}
+    .cta-banner h2{font-size:36px;font-weight:900;margin-bottom:12px}
+    .cta-banner p{color:rgba(255,255,255,.6);margin-bottom:32px;font-size:16px}
+
+    /* Footer */
+    footer{border-top:1px solid rgba(255,255,255,.06);padding:32px 40px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
+    footer p{color:rgba(255,255,255,.3);font-size:13px}
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="logo">Colorado <span>Pathway</span> to Trades</div>
+    <a href="/apply" class="nav-cta">Check My Eligibility →</a>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="badge">🎓 Free for all Colorado residents</div>
+    <h1>Get Funded.<br><span>Start Your Trade Career.</span></h1>
+    <p>We match you with the grants you qualify for — WIOA, Pell, and more — then connect you directly to an approved trade school. One simple form. No cost. No runaround.</p>
+    <div class="hero-btns">
+      <a href="/apply" class="btn-primary">✅ See What I Qualify For →</a>
+      <a href="#how-it-works" class="btn-secondary">How It Works</a>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <div class="stats-bar">
+    <div class="stat"><div class="stat-num">$15,000</div><div class="stat-lbl">Max grant per person</div></div>
+    <div class="stat"><div class="stat-num">53</div><div class="stat-lbl">Colorado Workforce Centers</div></div>
+    <div class="stat"><div class="stat-num">30 sec</div><div class="stat-lbl">Eligibility check</div></div>
+    <div class="stat"><div class="stat-num">$0</div><div class="stat-lbl">Cost to apply</div></div>
+  </div>
+
+  <!-- How It Works -->
+  <section class="section" id="how-it-works">
+    <div class="section-label">Simple Process</div>
+    <h2>From "I want a better job" to<br>first day of class in weeks</h2>
+    <p class="sub">We handle the complexity of the grant system so you don't have to.</p>
+    <div class="steps">
+      <div class="step"><div class="step-num">1</div><h3>Answer 8 Questions</h3><p>Tell us about your situation — takes about 2 minutes. No social security number needed.</p></div>
+      <div class="step"><div class="step-num">2</div><h3>See Your Grants</h3><p>Instantly see which grants you qualify for and how much funding you can get.</p></div>
+      <div class="step"><div class="step-num">3</div><h3>Pick Your Trade & School</h3><p>Choose from approved Colorado trade schools near you that accept your grant funding.</p></div>
+      <div class="step"><div class="step-num">4</div><h3>We Connect You</h3><p>We send your info to your local Workforce Center and the school — they reach out within 48 hours.</p></div>
+    </div>
+  </section>
+
+  <!-- Grants -->
+  <section class="section" id="grants">
+    <div class="section-label">Available Funding</div>
+    <h2>Grants that pay for<br>your training</h2>
+    <p class="sub">These are real federal and state programs — not loans. You don't pay them back.</p>
+    <div class="grants-grid">
+      <div class="grant-card"><div class="grant-icon">🏛️</div><h3>WIOA Individual Training Account</h3><div class="amount">Up to $15,000</div><p>The main federal workforce grant. Covers tuition, books, tools, and certifications at approved schools.</p></div>
+      <div class="grant-card"><div class="grant-icon">📚</div><h3>Federal Pell Grant</h3><div class="amount">Up to $7,395/yr</div><p>Need-based federal grant for students. Can be stacked with WIOA for maximum funding.</p></div>
+      <div class="grant-card"><div class="grant-icon">🏭</div><h3>Trade Adjustment Assistance</h3><div class="amount">Full tuition + stipend</div><p>For workers displaced by foreign trade or outsourcing. Includes a monthly living stipend while in school.</p></div>
+      <div class="grant-card"><div class="grant-icon">🏔️</div><h3>Colorado State Grant</h3><div class="amount">Up to $5,000</div><p>State-funded supplement available through Colorado Workforce Centers. Fills gaps left by federal grants.</p></div>
+    </div>
+  </section>
+
+  <!-- Trades -->
+  <section class="section" id="trades">
+    <div class="section-label">Available Trades</div>
+    <h2>Find your path</h2>
+    <p class="sub">All programs below are available at WIOA-approved schools in Colorado.</p>
+    <div class="trades-grid">
+      <div class="trade-chip" onclick="location.href='/apply?trade=Electrician'"><div class="icon">⚡</div><span>Electrician</span></div>
+      <div class="trade-chip" onclick="location.href='/apply?trade=HVAC'"><div class="icon">❄️</div><span>HVAC</span></div>
+      <div class="trade-chip" onclick="location.href='/apply?trade=Welding'"><div class="icon">🔥</div><span>Welding</span></div>
+      <div class="trade-chip" onclick="location.href='/apply?trade=Plumbing'"><div class="icon">🔧</div><span>Plumbing</span></div>
+      <div class="trade-chip" onclick="location.href='/apply?trade=Automotive'"><div class="icon">🚗</div><span>Automotive</span></div>
+      <div class="trade-chip" onclick="location.href='/apply?trade=CDL'"><div class="icon">🚛</div><span>CDL / Trucking</span></div>
+      <div class="trade-chip" onclick="location.href='/apply?trade=Medical+Assistant'"><div class="icon">🏥</div><span>Medical Assistant</span></div>
+      <div class="trade-chip" onclick="location.href='/apply?trade=Carpentry'"><div class="icon">🪚</div><span>Carpentry</span></div>
+      <div class="trade-chip" onclick="location.href='/apply?trade=IT+Support'"><div class="icon">💻</div><span>IT Support</span></div>
+      <div class="trade-chip" onclick="location.href='/apply?trade=Cosmetology'"><div class="icon">✂️</div><span>Cosmetology</span></div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <div class="cta-banner">
+    <h2>Ready to start? It takes 2 minutes.</h2>
+    <p>Check your eligibility for free — no social security number, no credit check.</p>
+    <a href="/apply" class="btn-primary" style="font-size:18px;padding:18px 44px">✅ Check My Eligibility →</a>
+  </div>
+
+  <footer>
+    <p>© 2026 Colorado Pathway to Trades. Helping Colorado workers find their path.</p>
+    <p>Not affiliated with the Colorado Department of Labor. We are an independent referral service.</p>
+  </footer>
+
+</body>
+</html>

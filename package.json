@@ -1,0 +1,17 @@
+{
+  "name": "pathway-to-trades",
+  "version": "1.0.0",
+  "description": "Colorado Pathway to Trades — grant eligibility + school enrollment in one flow",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node server/index.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "nodemailer": "^6.9.7",
+    "node-fetch": "^2.7.0",
+    "dotenv": "^16.3.1"
+  }
+}

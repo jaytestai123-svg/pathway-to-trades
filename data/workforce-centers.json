@@ -1,0 +1,9 @@
+[
+  { "name": "Workforce Center — Denver", "city": "Denver", "zip": "80202", "phone": "720-944-3224", "email": "denver.workforce@state.co.us", "address": "2200 W. Alameda Ave, Denver, CO 80223", "url": "https://www.denvergov.org/workforce" },
+  { "name": "Workforce Center — Aurora", "city": "Aurora", "zip": "80011", "phone": "303-636-1160", "email": "aurora.workforce@state.co.us", "address": "1200 S. Havana St, Aurora, CO 80012", "url": "https://www.auroragov.org/workforce" },
+  { "name": "Workforce Center — Colorado Springs", "city": "Colorado Springs", "zip": "80903", "phone": "719-667-3737", "email": "csprings.workforce@state.co.us", "address": "1675 Garden of the Gods Rd, CO Springs, CO 80907", "url": "https://www.uccs.edu/workforce" },
+  { "name": "Workforce Center — Greeley", "city": "Greeley", "zip": "80631", "phone": "970-352-1551", "email": "greeley.workforce@state.co.us", "address": "515 N 15th Ave, Greeley, CO 80631", "url": "https://www.weld.gov/workforce" },
+  { "name": "Workforce Center — Pueblo", "city": "Pueblo", "zip": "81003", "phone": "719-583-6100", "email": "pueblo.workforce@state.co.us", "address": "212 W. 12th St, Pueblo, CO 81003", "url": "https://www.pueblocounty.us/workforce" },
+  { "name": "Workforce Center — Fort Collins", "city": "Fort Collins", "zip": "80524", "phone": "970-498-6990", "email": "ftcollins.workforce@state.co.us", "address": "200 W Oak St, Fort Collins, CO 80521", "url": "https://www.larimer.org/workforce" },
+  { "name": "Workforce Center — Grand Junction", "city": "Grand Junction", "zip": "81501", "phone": "970-248-7090", "email": "grandjunction.workforce@state.co.us", "address": "512 29½ Rd, Grand Junction, CO 81504", "url": "https://www.mesacounty.us/workforce" }
+]
